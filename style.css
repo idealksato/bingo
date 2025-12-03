@@ -1,0 +1,236 @@
+:root {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --primary-color: #3b82f6;
+    --secondary-color: #64748b;
+    --accent-color: #ec4899;
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --active-cell-bg: #22c55e;
+    --active-cell-shadow: 0 0 15px #22c55e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+header {
+    text-align: center;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Game Display Section */
+.game-display {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.current-number-container {
+    text-align: center;
+}
+
+.current-number-label {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+}
+
+.current-number {
+    font-size: 10rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-color);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.current-number-text {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    min-height: 2rem;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.btn {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #2563eb);
+    color: white;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Board Section */
+.board-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bingo-letters {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns for B-I-N-G-O */
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.letter {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns corresponding to B-I-N-G-O */
+    gap: 0.5rem;
+}
+
+/* 
+   We need to organize the numbers 1-75 into columns.
+   B: 1-15
+   I: 16-30
+   N: 31-45
+   G: 46-60
+   O: 61-75
+   
+   The grid will be filled column by column visually, but CSS Grid fills row by row by default.
+   To make it look like columns, we can use CSS Grid auto-flow or just structure the HTML correctly.
+   Actually, a standard Bingo board is often shown as a grid where columns are B, I, N, G, O.
+   So column 1 has 1-15, column 2 has 16-30, etc.
+   Since there are 15 numbers per letter, that would be 15 rows.
+*/
+.board-grid {
+    grid-template-rows: repeat(15, 1fr);
+    grid-auto-flow: column; /* Fill columns first */
+}
+
+.number-cell {
+    aspect-ratio: 1.5; /* Rectangular cells */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    transition: all 0.3s ease;
+}
+
+.number-cell.active {
+    background: var(--active-cell-bg);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: var(--active-cell-shadow);
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+/* Animation for new number */
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop {
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
