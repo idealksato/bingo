@@ -3,7 +3,7 @@ class BingoGame {
         this.drawnNumbers = new Set();
         this.maxNumber = 75;
         this.isAnimating = false;
-        
+
         // DOM Elements
         this.currentNumberEl = document.getElementById('current-number');
         this.currentNumberTextEl = document.getElementById('current-number-text');
@@ -17,6 +17,7 @@ class BingoGame {
     init() {
         this.createBoard();
         this.addEventListeners();
+        this.loadState();
     }
 
     createBoard() {
@@ -67,7 +68,7 @@ class BingoGame {
         } while (this.drawnNumbers.has(number));
 
         this.drawnNumbers.add(number);
-        
+
         // Update UI
         this.currentNumberEl.textContent = number;
         this.currentNumberEl.classList.remove('animate-pop');
@@ -79,6 +80,7 @@ class BingoGame {
 
         this.isAnimating = false;
         this.drawBtn.disabled = false;
+        this.saveState();
     }
 
     updateBoard(number) {
@@ -105,9 +107,56 @@ class BingoGame {
         this.drawnNumbers.clear();
         this.currentNumberEl.textContent = '--';
         this.currentNumberTextEl.textContent = 'Ready';
-        
+
         const activeCells = document.querySelectorAll('.number-cell.active');
         activeCells.forEach(cell => cell.classList.remove('active'));
+
+        this.saveState();
+    }
+
+    saveState() {
+        const state = {
+            drawnNumbers: Array.from(this.drawnNumbers)
+        };
+        const d = new Date();
+        d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + d.toUTCString();
+        document.cookie = "bingoState=" + JSON.stringify(state) + ";" + expires + ";path=/";
+    }
+
+    loadState() {
+        const name = "bingoState=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                try {
+                    const state = JSON.parse(c.substring(name.length, c.length));
+                    if (state.drawnNumbers) {
+                        this.drawnNumbers = new Set(state.drawnNumbers);
+
+                        // Restore UI
+                        this.drawnNumbers.forEach(num => {
+                            this.updateBoard(num);
+                        });
+
+                        // Update current number display with the last drawn number
+                        if (this.drawnNumbers.size > 0) {
+                            const lastNum = Array.from(this.drawnNumbers).pop();
+                            this.currentNumberEl.textContent = lastNum;
+                            this.updateStatusText(lastNum);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to load state", e);
+                }
+                return;
+            }
+        }
     }
 }
 
